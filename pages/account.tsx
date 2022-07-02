@@ -5,7 +5,10 @@ import fetch from "isomorphic-unfetch";
 import useAuth from "../hooks/useAuth";
 import fetcher from "../utils/fetcher";
 import useSWR from "swr";
-import Tokens from "../components/account/tokens";
+import dynamic from "next/dynamic";
+
+const Tokens = dynamic(() => import("../components/account/tokens"));
+const Success = dynamic(() => import("../components/notifications/success"));
 
 const metaTags = {
   title: "apr",
@@ -18,6 +21,7 @@ export default function Account() {
   const { session, status } = useAuth(true);
   const { data: user } = useSWR("/api/user", fetcher);
   const [username, setUsername] = useState("");
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (username === "" && user) setUsername(user.username);
@@ -30,6 +34,8 @@ export default function Account() {
       method: "PUT",
       body: JSON.stringify({ username }),
     });
+    setShow(true);
+    setTimeout(() => setShow(false), 3000);
   };
 
   return (
@@ -66,13 +72,19 @@ export default function Account() {
         <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
           <Alert variant="filled" severity="error">
             <AlertTitle>https://anchor.projectserum.com</AlertTitle>
-            If you have a user already in the old version, please continue
-            managing your keys in that UI
+            If you have a user already in the old version, please continue managing your keys in
+            that UI
           </Alert>
         </Grid>
         <Grid item xs={12}>
           <Tokens />
         </Grid>
+        <Success
+          show={show}
+          setShow={setShow}
+          message="Username updated!"
+          subText="Your username has been successfully updated."
+        />
       </Grid>
     </Layout>
   );

@@ -2,19 +2,13 @@ import dynamic from "next/dynamic";
 import { memo } from "react";
 
 const ProgramBanner = dynamic(() => import("./program-banner"));
-const ProgramTabs = dynamic(() => import("./program-tabs"));
+const Tabs = dynamic(() => import("./tabs"));
 
-function Program({
-  program,
-  selectedBuild,
-  builds,
-  readme,
-  files,
-}: ProgramProps) {
+function Program({ program, selectedBuild, builds, readme, files }: ProgramProps) {
   const latestBuild = selectedBuild.id === builds[0].id;
 
   return (
-    <>
+    <div className="flex flex-col gap-8">
       <ProgramBanner
         name={program.name}
         address={program.address}
@@ -25,13 +19,8 @@ function Program({
         latest={latestBuild}
       />
 
-      <ProgramTabs
-        selectedBuild={selectedBuild}
-        builds={builds}
-        readme={readme}
-        files={files}
-      />
-    </>
+      <Tabs selectedBuild={selectedBuild} builds={builds} readme={readme} files={files} />
+    </div>
   );
 }
 
